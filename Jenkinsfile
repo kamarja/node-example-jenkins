@@ -20,6 +20,8 @@ node {
     stage('Build image') {
         /* This builds the actual image - like docker build*/
         sh "echo build-stage"
+        sh "printing environment variables"
+        sh "printenv"
         sh "docker build -t node-example-jenkins docker/."
         color = 'GREEN'
         colorCode = '#00FF00'

@@ -20,11 +20,18 @@ node {
     stage('Build image') {
         /* This builds the actual image - like docker build*/
         sh "echo build-stage"
-        sh 'echo "printing environment variables."'
+        sh 'echo "Printing environment variables."'
         environment {
                 AWS_REGION = sh(script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region', , returnStdout: true).trim()
         }
         sh "printenv"
+        sh 'echo "Printing Jenkins Internal Variables"'
+        script {
+            fields.each {
+                key, value -> println("${key} = ${value}");
+            }
+            println(env.AWS_REGION)
+        }
         sh "docker build -t node-example-jenkins docker/."
         color = 'GREEN'
         colorCode = '#00FF00'

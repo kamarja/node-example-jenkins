@@ -9,6 +9,7 @@ node {
     def msg = "Build Started - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
     def repo = "${env.GIT_URL}"
     def fields = env.getEnvironment()
+    def server_name = "${env.HUDSON_URL}"
 
     stage('Clone repository') {
         checkout scm
@@ -37,8 +38,8 @@ node {
 
     stage('Push QA image') {
         when {
-            beforAgent: true
-            env.HUDSON_URL 'http://jenkins-qa.theadventr.com:8080/'
+            beforAgent true
+            server_name 'http://jenkins-qa.theadventr.com:8080/'
         }
         sh "\$(aws ecr get-login --no-include-email --region us-east-2)"
         sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
@@ -51,8 +52,8 @@ node {
 
     stage('Push Prod image') {
         when {
-            beforAgent: true
-            env.HUDSON_URL 'http://jenkins.adventr.me:8080/'
+            beforAgent true
+            server_name 'http://jenkins.adventr.me:8080/'
         }
         sh "\$(aws ecr get-login --no-include-email --region us-east-1)"
         sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
@@ -66,8 +67,8 @@ node {
 
     stage('QA Tests') {
         when {
-            beforAgent: true
-            env.HUDSON_URL 'http://jenkins-qa.theadventr.com:8080/'
+            beforAgent true
+            server_name 'http://jenkins-qa.theadventr.com:8080/'
         }
         sh 'echo "All QA Tests passed."'
         color = 'GREEN'
@@ -78,8 +79,8 @@ node {
 
     stage('Prod Tests') {
         when {
-            beforAgent: true
-            env.HUDSON_URL 'http://jenkins.adventr.me:8080/'
+            beforAgent true
+            server_name 'http://jenkins.adventr.me:8080/'
         }
         sh 'echo "All QA Tests passed."'
         color = 'GREEN'
@@ -90,8 +91,8 @@ node {
 
     stage('Deploy QA') {
         when {
-            beforAgent: true
-            env.HUDSON_URL 'http://jenkins-qa.theadventr.com:8080/'
+            beforAgent true
+            server_name 'http://jenkins-qa.theadventr.com:8080/'
         }
         colorCode = '#00FF00' 
         // msg = "Successfully Deployed to QA - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
@@ -102,8 +103,8 @@ node {
 
     stage('Deploy Prod') {
         when {
-            beforAgent: true
-            env.HUDSON_URL 'http://jenkins.adventr.me:8080/'
+            beforAgent true
+            server_name 'http://jenkins.adventr.me:8080/'
         }
         colorCode = '#00FF00' 
         // msg = "Successfully Deployed to Prod - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"

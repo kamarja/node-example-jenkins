@@ -21,7 +21,7 @@ node {
         /* This builds the actual image - like docker build*/
         sh "echo build-stage"
         sh "cd docker"
-        sh "docker build -t node-example-jenkins ."
+        sh "docker build -t node-example-jenkins docker/."
         color = 'GREEN'
         colorCode = '#00FF00'
         msg = "Build Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"

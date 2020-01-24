@@ -21,16 +21,12 @@ node {
         /* This builds the actual image - like docker build*/
         sh "echo build-stage"
         sh 'echo "Printing environment variables."'
-        environment {
-                AWS_REGION = sh(script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region', , returnStdout: true).trim()
-        }
         sh "printenv"
         sh 'echo "Printing Jenkins Internal Variables"'
         script {
             fields.each {
                 key, value -> println("${key} = ${value}");
             }
-            println(env.AWS_REGION)
         }
         sh "docker build -t node-example-jenkins docker/."
         color = 'GREEN'
@@ -40,64 +36,78 @@ node {
     }
 
     stage('Push QA image') {
-        if (env.BRANCH_NAME ==~ "develop") {
-            sh "\$(aws ecr get-login --no-include-email --region us-east-2)"
-            sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
-            sh "docker push 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
-            color = 'GREEN'
-            colorCode = '#00FF00' 
-            msg = "Push to ECR in QA Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-            slackSend(color: colorCode, message: msg)
+        when {
+            beforAgent: true
+            env.HUDSON_URL 'http://jenkins-qa.theadventr.com:8080/'
         }
+        sh "\$(aws ecr get-login --no-include-email --region us-east-2)"
+        sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
+        sh "docker push 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
+        color = 'GREEN'
+        colorCode = '#00FF00' 
+        msg = "Push to ECR in QA Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+        slackSend(color: colorCode, message: msg)
     }
 
     stage('Push Prod image') {
-        if (env.BRANCH_NAME ==~ "master") {
-            sh "\$(aws ecr get-login --no-include-email --region us-east-1)"
-            sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
-            sh "docker push 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
-            color = 'GREEN'
-            colorCode = '#00FF00' 
-            msg = "Push to ECR in Prod Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-            slackSend(color: colorCode, message: msg)
+        when {
+            beforAgent: true
+            env.HUDSON_URL 'http://jenkins.adventr.me:8080/'
         }
+        sh "\$(aws ecr get-login --no-include-email --region us-east-1)"
+        sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
+        sh "docker push 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
+        color = 'GREEN'
+        colorCode = '#00FF00' 
+        msg = "Push to ECR in Prod Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+        slackSend(color: colorCode, message: msg)
+
     }
 
     stage('QA Tests') {
-        if (env.BRANCH_NAME ==~ "develop") {
-                sh 'echo "All QA Tests passed."'
-                color = 'GREEN'
-                colorCode = '#00FF00'
-                msg = "QA Tests Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-                slackSend(color: colorCode, message: msg)
+        when {
+            beforAgent: true
+            env.HUDSON_URL 'http://jenkins-qa.theadventr.com:8080/'
         }
+        sh 'echo "All QA Tests passed."'
+        color = 'GREEN'
+        colorCode = '#00FF00'
+        msg = "QA Tests Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+        slackSend(color: colorCode, message: msg)
     }
 
     stage('Prod Tests') {
-        if (env.BRANCH_NAME ==~ "master") {
-                sh 'echo "All QA Tests passed."'
-                color = 'GREEN'
-                colorCode = '#00FF00'
-                msg = "QA Tests Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-                slackSend(color: colorCode, message: msg)
+        when {
+            beforAgent: true
+            env.HUDSON_URL 'http://jenkins.adventr.me:8080/'
         }
+        sh 'echo "All QA Tests passed."'
+        color = 'GREEN'
+        colorCode = '#00FF00'
+        msg = "QA Tests Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+        slackSend(color: colorCode, message: msg)
     }
 
     stage('Deploy QA') {
-        if (env.BRANCH_NAME ==~ "develop") {
-            colorCode = '#00FF00' 
-            // msg = "Successfully Deployed to QA - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-            // sh "sudo /var/lib/jenkins/adventrv2-adventr-k8s/scripts/qa_deploy_script.sh node-example-jenkins"
-            slackSend(color: colorCode, message: msg)
+        when {
+            beforAgent: true
+            env.HUDSON_URL 'http://jenkins-qa.theadventr.com:8080/'
         }
+        colorCode = '#00FF00' 
+        // msg = "Successfully Deployed to QA - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+        // sh "sudo /var/lib/jenkins/adventrv2-adventr-k8s/scripts/qa_deploy_script.sh node-example-jenkins"
+        slackSend(color: colorCode, message: msg)
+
     }
 
     stage('Deploy Prod') {
-        if (env.BRANCH_NAME ==~ "master") {
-            colorCode = '#00FF00' 
-            // msg = "Successfully Deployed to Prod - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-            // sh "sudo /var/lib/jenkins/adventrv2-adventr-k8s/scripts/qa_deploy_script.sh node-example-jenkins"
-            slackSend(color: colorCode, message: msg)
+        when {
+            beforAgent: true
+            env.HUDSON_URL 'http://jenkins.adventr.me:8080/'
         }
+        colorCode = '#00FF00' 
+        // msg = "Successfully Deployed to Prod - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+        // sh "sudo /var/lib/jenkins/adventrv2-adventr-k8s/scripts/qa_deploy_script.sh node-example-jenkins"
+        slackSend(color: colorCode, message: msg)
     }
 }

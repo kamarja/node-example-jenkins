@@ -30,7 +30,7 @@ node {
     stage('Push QA image') {
         if (env.BRANCH_NAME ==~ "develop") {
             sh "\$(aws ecr get-login --no-include-email --region us-east-2)"
-            sh "docker tag node-example-jenkins:latest $(aws ecr get-login --no-include-email --region us-east-2)"
+            sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
             sh "docker push 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
             color = 'GREEN'
             colorCode = '#00FF00' 

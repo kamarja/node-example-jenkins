@@ -4,7 +4,7 @@
 pipeline {
   agent none
   environment {
-    commit_id = ""
+    //commit_id = readFile('.git/commit-id').trim()
     msg = "Build Started - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
     repo = "${env.GIT_URL}"
     server_name = "${env.HUDSON_URL}"
@@ -14,8 +14,8 @@ pipeline {
     stage('Clone repository') {
         steps {
             checkout scm
-            sh "git rev-parse --short HEAD > .git/commit-id" 
-            commit_id = readFile('.git/commit-id').trim()
+            //sh "git rev-parse --short HEAD > .git/commit-id" 
+            
             //slackSend(color: colorCode, message: msg)
         }
     }

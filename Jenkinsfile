@@ -21,6 +21,14 @@ pipeline {
             sh 'echo "Prepared variables."'
             //sh "git rev-parse --short HEAD > .git/commit-id" 
             //slackSend(color: colorCode, message: msg)
+              script {
+                   def fields = env.getEnvironment()
+                   fields.each {
+                        key, value -> println("${key} = ${value}");
+                    }
+ 
+                    println(env.REGION)
+               }
         }
     }
 

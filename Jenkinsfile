@@ -15,14 +15,13 @@ pipeline {
             repo = "${env.GIT_URL}"
             server_name = "${env.HUDSON_URL}"
             branch = 'develop'
-            //REGION = sh(returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
+            REGION = sh(returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
         }
 
         steps {
             sh 'echo "Prepared variables."'
             //sh "git rev-parse --short HEAD > .git/commit-id" 
             //slackSend(color: colorCode, message: msg)
-            sh "check region"
         }
     }
 

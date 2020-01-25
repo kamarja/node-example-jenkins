@@ -14,7 +14,8 @@ pipeline {
             prod_ecr_msg = "Push to ECR in Prod Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
             repo = "${env.GIT_URL}"
             server_name = "${env.HUDSON_URL}"
-            REGION = sh(script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region', , returnStdout: true).trim()
+            branch = 'develop'
+            REGION = sh(returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
         }
 
         steps {
@@ -60,7 +61,7 @@ pipeline {
         environment {
             server_name = "${env.HUDSON_URL}"
             branch = 'develop'
-            REGION = sh(script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region', , returnStdout: true).trim()
+            REGION = sh (returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
         }
 
         when { equals expected: 'develop', actual: 'develop' }

@@ -14,8 +14,8 @@ pipeline {
             prod_ecr_msg = "Push to ECR in Prod Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
             repo = "${env.GIT_URL}"
             server_name = "${env.HUDSON_URL}"
-            branch = 'develop'
             REGION = sh(returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
+            branch = getContext(REGION)
         }
 
         steps {
@@ -38,8 +38,8 @@ pipeline {
         environment {
             msg = "Build Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
             server_name = "${env.HUDSON_URL}"
-            branch = 'develop'
-            REGION = sh (returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
+            REGION = sh(returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
+            branch = getContext(REGION)
         }  
 
         steps {
@@ -57,11 +57,11 @@ pipeline {
     stage('Push QA image') {
         environment {
             server_name = "${env.HUDSON_URL}"
-            branch = 'develop'
-            REGION = sh (returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
+            REGION = sh(returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
+            branch = getContext(REGION)
         }
 
-        when { equals expected: branch, actual: 'develop' }
+        when { equals expected: env.HUDSON_URL, actual: 'http://jenkins-qa.theadventr.com:8080/' }
 
         // when {
         //         beforeAgent true
@@ -81,10 +81,11 @@ pipeline {
     stage('Push Prod image') {
         environment {
             server_name = "${env.HUDSON_URL}"
-            REGION = sh (returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
+            REGION = sh(returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
+            branch = getContext(REGION)
         }
 
-        when { equals expected: branch, actual: 'master' }
+        when { equals expected: env.HUDSON_URL, actual: 'http://jenkins.adventr.me:8080/' }
 
         // when {
         //         beforeAgent true
@@ -122,7 +123,7 @@ def initialize() {
     sh 'branch=$(echo "$GIT_BRANCH")'
     showEnvironmentVariables()
     sh 'AWS_REGION=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)'
-    getContext(AWS_REGION)
+    getContext("us-east-2")
 }
 
 

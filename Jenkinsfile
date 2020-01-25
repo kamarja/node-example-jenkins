@@ -23,7 +23,6 @@ pipeline {
             //sh "git rev-parse --short HEAD > .git/commit-id" 
             //slackSend(color: colorCode, message: msg)
             sh "check region"
-            echo env.REGION
             script {
                    def fields = env.getEnvironment()
                    fields.each {

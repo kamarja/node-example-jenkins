@@ -4,7 +4,7 @@
 pipeline {
   agent none
   environment {
-    commit_id
+    commit_id = ""
     msg = "Build Started - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
     repo = "${env.GIT_URL}"
     server_name = "${env.HUDSON_URL}"

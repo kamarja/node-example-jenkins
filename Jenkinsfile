@@ -61,7 +61,7 @@ pipeline {
             REGION = sh (returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
         }
 
-        when { equals expected: env.REGION, actual: 'us-east-2' }
+        when { equals expected: branch, actual: 'develop' }
 
         // when {
         //         beforeAgent true
@@ -84,7 +84,7 @@ pipeline {
             REGION = sh (returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
         }
 
-        when { equals expected: env.REGION, actual: 'us-east-1' }
+        when { equals expected: branch, actual: 'master' }
 
         // when {
         //         beforeAgent true
@@ -117,8 +117,8 @@ def showEnvironmentVariables() {
 }
 
 def initialize() {
-    sh 'branch="develop"'
-    sh 'export AWS_REGION=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)'
+    sh 'branch=$(echo "$GIT_BRANCH" | awk -F/ {' print $2'})'
+    sh 'AWS_REGION=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)'
     showEnvironmentVariables()
     getContext("develop")
 }

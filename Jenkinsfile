@@ -37,13 +37,17 @@ pipeline {
     stage('Build image') {
         environment {
             msg = "Build Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+            server_name = "${env.HUDSON_URL}"
+            branch = 'develop'
+            REGION = sh (returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
         }  
 
         steps {
             /* This builds the actual image - like docker build*/
             sh "echo build-stage"
             sh 'echo "Printing environment variables."'
-            sh "printenv"
+            sh 'echo $REGION'
+            sh 'echo $server_name'
             sh "docker build -t node-example-jenkins docker/."
             //slackSend(color: colorCode, message: msg)       
         }
@@ -67,8 +71,6 @@ pipeline {
 
         steps {
             sh 'echo "Pushing QA image."'
-            sh 'echo $REGION'
-            sh 'echo $server_name'
             sh "\$(aws ecr get-login --no-include-email --region us-east-2)"
             sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
             sh "docker push 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"

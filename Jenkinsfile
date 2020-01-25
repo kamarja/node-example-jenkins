@@ -64,7 +64,7 @@ pipeline {
             REGION = sh (returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
         }
 
-        when { equals expected: REGION, actual: 'us-east-2' }
+        when { equals expected: env.REGION, actual: 'us-east-2' }
 
         // when {
         //         beforeAgent true
@@ -89,7 +89,7 @@ pipeline {
             REGION = sh (returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
         }
 
-        when { equals expected: REGION, actual: 'us-east-1' }
+        when { equals expected: env.REGION, actual: 'us-east-1' }
 
         // when {
         //         beforeAgent true

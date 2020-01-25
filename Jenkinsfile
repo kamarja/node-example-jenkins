@@ -20,6 +20,7 @@ pipeline {
 
         steps {
             sh 'echo "Prepared variables."'
+            initialize()
             //sh "git rev-parse --short HEAD > .git/commit-id" 
             //slackSend(color: colorCode, message: msg)
         }
@@ -99,3 +100,23 @@ pipeline {
     }
   }
 }
+
+// ================================================================================================
+// Scripts
+// ================================================================================================
+
+def getContext(environment) {
+    return (env.BRANCH_NAME == 'develop') ? environment : 'develop'
+}
+
+def showEnvironmentVariables() {
+    sh 'env | sort > env.txt'
+    sh 'cat env.txt'
+}
+
+def initialize() {
+    showEnvironmentVariables()
+    getContext("develop")
+}
+
+

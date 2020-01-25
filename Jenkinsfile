@@ -22,14 +22,16 @@ pipeline {
             sh 'echo "Prepared variables."'
             //sh "git rev-parse --short HEAD > .git/commit-id" 
             //slackSend(color: colorCode, message: msg)
-              script {
+            sh "check region"
+            echo env.REGION
+            script {
                    def fields = env.getEnvironment()
                    fields.each {
                         key, value -> println("${key} = ${value}");
                     }
  
-                    println(env.REGION)
-               }
+                println(env.REGION)
+            }
         }
     }
 
@@ -64,7 +66,7 @@ pipeline {
             REGION = sh (returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
         }
 
-        when { equals expected: "$REGION", actual: 'us-east-2' }
+        when { equals expected: env.REGION, actual: 'us-east-2' }
 
         // when {
         //         beforeAgent true

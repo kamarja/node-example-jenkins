@@ -37,7 +37,7 @@ node {
     }
 
     stage('Push QA image') {
-        if (env.HUDSON_URL ==~ 'http://jenkins.theadventr.com:8080/') {
+        if (env.HUDSON_URL == 'http://jenkins.theadventr.com:8080/') {
             sh "\$(aws ecr get-login --no-include-email --region us-east-2)"
             sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
             sh "docker push 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
@@ -50,7 +50,7 @@ node {
     }
 
     stage('Push Prod image') {
-        if (env.HUDSON_URL ==~ 'http://jenkins.adventr.me:8080/') {
+        if (env.HUDSON_URL == 'http://jenkins.adventr.me:8080/') {
             sh "\$(aws ecr get-login --no-include-email --region us-east-1)"
             sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
             sh "docker push 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
@@ -62,7 +62,7 @@ node {
     }
 
     stage('QA Tests') {
-        if (env.HUDSON_URL ==~ 'http://jenkins.theadventr.com:8080/') {
+        if (env.HUDSON_URL == 'http://jenkins.theadventr.com:8080/') {
             sh 'echo "All QA Tests passed."'
             color = 'GREEN'
             colorCode = '#00FF00'
@@ -73,7 +73,7 @@ node {
     }
 
     stage('Prod Tests') {
-        if (env.HUDSON_URL ==~ 'http://jenkins.adventr.me:8080/') {
+        if (env.HUDSON_URL == 'http://jenkins.adventr.me:8080/') {
             sh 'echo "All QA Tests passed."'
             color = 'GREEN'
             colorCode = '#00FF00'
@@ -84,7 +84,7 @@ node {
     }
 
     stage('Deploy QA') {
-        if (env.HUDSON_URL ==~ 'http://jenkins-qa.theadventr.com:8080/') {
+        if (env.HUDSON_URL == 'http://jenkins-qa.theadventr.com:8080/') {
             colorCode = '#00FF00' 
             // msg = "Successfully Deployed to QA - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
             // sh "sudo /var/lib/jenkins/adventrv2-adventr-k8s/scripts/qa_deploy_script.sh node-example-jenkins"
@@ -93,7 +93,7 @@ node {
     }
 
     stage('Deploy Prod') {
-        if (env.HUDSON_URL ==~ 'http://jenkins.adventr.me:8080/') {
+        if (env.HUDSON_URL == 'http://jenkins.adventr.me:8080/') {
             colorCode = '#00FF00' 
             // msg = "Successfully Deployed to Prod - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
             // sh "sudo /var/lib/jenkins/adventrv2-adventr-k8s/scripts/qa_deploy_script.sh node-example-jenkins"

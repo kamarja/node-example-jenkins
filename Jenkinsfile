@@ -6,6 +6,8 @@ pipeline {
   environment {
     //commit_id = readFile('.git/commit-id').trim()
     msg = "Build Started - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+    qa_ecr_msg = "Push to ECR in QA Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+    prod_ecr_msg = "Push to ECR in Prod Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
     repo = "${env.GIT_URL}"
     server_name = "${env.HUDSON_URL}"
 
@@ -52,9 +54,6 @@ pipeline {
             sh "\$(aws ecr get-login --no-include-email --region us-east-2)"
             sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
             sh "docker push 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
-            environment {
-                msg = "Push to ECR in QA Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-            }
             //slackSend(color: colorCode, message: msg)
                 
             }

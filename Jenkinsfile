@@ -107,8 +107,10 @@ pipeline {
 // Scripts
 // ================================================================================================
 
-def getContext(environment) {
-    return (env.BRANCH_NAME == 'develop') ? environment : 'develop'
+def getContext(region) { 
+    (env.BRANCH_NAME == 'develop') ? region : 'us-east-2'
+    (env.BRANCH_NAME == 'master') ? region : 'us-east-1'
+    return env.BRANCH_NAME
 }
 
 def showEnvironmentVariables() {
@@ -118,9 +120,9 @@ def showEnvironmentVariables() {
 
 def initialize() {
     sh 'branch=$(echo "$GIT_BRANCH")'
-    sh 'AWS_REGION=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)'
     showEnvironmentVariables()
-    getContext("develop")
+    sh 'AWS_REGION=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)'
+    getContext(AWS_REGION)
 }
 
 

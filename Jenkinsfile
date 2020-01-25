@@ -3,15 +3,15 @@
 
 pipeline {
   agent none
-  environment {
-    //commit_id = readFile('.git/commit-id').trim()
-    msg = "Build Started - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-    qa_ecr_msg = "Push to ECR in QA Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-    prod_ecr_msg = "Push to ECR in Prod Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-    repo = "${env.GIT_URL}"
-    server_name = "${env.HUDSON_URL}"
+//   environment {
+//     //commit_id = readFile('.git/commit-id').trim()
+//     msg = "Build Started - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+//     qa_ecr_msg = "Push to ECR in QA Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+//     prod_ecr_msg = "Push to ECR in Prod Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+//     repo = "${env.GIT_URL}"
+//     server_name = "${env.HUDSON_URL}"
 
-  }
+//   }
   stages {
     stage('Clone repository') {
         steps {

@@ -115,6 +115,8 @@ def showEnvironmentVariables() {
 }
 
 def initialize() {
+    sh 'branch="develop"'
+    sh 'export AWS_REGION=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)'
     showEnvironmentVariables()
     getContext("develop")
 }

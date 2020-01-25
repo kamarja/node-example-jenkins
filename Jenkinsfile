@@ -63,11 +63,13 @@ pipeline {
             REGION = sh(script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region', , returnStdout: true).trim()
         }
 
-        when {
-                beforeAgent true
-                //env.HUDSON_URL 'http://jenkins.theadventr.com:8080/'
-                branch 'develop'
-        }
+        when { equals expected: 'develop', actual: 'develop' }
+
+        // when {
+        //         beforeAgent true
+        //         //env.HUDSON_URL 'http://jenkins.theadventr.com:8080/'
+        //         branch 'develop'
+        // }
 
         steps {
             sh 'echo "Pushing QA image."'

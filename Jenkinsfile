@@ -63,12 +63,6 @@ pipeline {
 
         when { equals expected: env.HUDSON_URL, actual: 'http://jenkins-qa.theadventr.com:8080/' }
 
-        // when {
-        //         beforeAgent true
-        //         //env.HUDSON_URL 'http://jenkins.theadventr.com:8080/'
-        //         branch 'develop'
-        // }
-
         steps {
             sh 'echo "Pushing QA image."'
             sh "\$(aws ecr get-login --no-include-email --region us-east-2)"
@@ -86,12 +80,6 @@ pipeline {
         }
 
         when { equals expected: env.HUDSON_URL, actual: 'http://jenkins.adventr.me:8080/' }
-
-        // when {
-        //         beforeAgent true
-        //         //env.HUDSON_URL 'http://jenkins.adventr.me:8080/'
-        //         branch 'master'
-        // }
 
         steps {
             sh 'echo "Pushing Prod image."'
@@ -121,9 +109,11 @@ def showEnvironmentVariables() {
 
 def initialize() {
     sh 'branch=$(echo "$GIT_BRANCH")'
+    sh 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region > region.txt'
+    AWS_REGION = readFile 'region.txt'
+    echo "This is the region: $AWS_REGION"
+    getContext(AWS_REGION)
     showEnvironmentVariables()
-    sh 'AWS_REGION=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)'
-    getContext("us-east-2")
 }
 
 

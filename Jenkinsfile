@@ -57,6 +57,12 @@ pipeline {
     }
 
     stage('Push QA image') {
+        environment {
+            server_name = "${env.HUDSON_URL}"
+            branch = 'develop'
+            REGION = sh(script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region', , returnStdout: true).trim()
+        }
+
         when {
                 beforeAgent true
                 //env.HUDSON_URL 'http://jenkins.theadventr.com:8080/'

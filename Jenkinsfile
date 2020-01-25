@@ -117,7 +117,7 @@ def showEnvironmentVariables() {
 }
 
 def initialize() {
-    sh 'branch=$(echo "$GIT_BRANCH" | sed 's/origin\///')'
+    sh 'branch=$(echo "$GIT_BRANCH")'
     sh 'AWS_REGION=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)'
     showEnvironmentVariables()
     getContext("develop")

@@ -64,7 +64,7 @@ pipeline {
             REGION = sh (returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
         }
 
-        when { equals expected: env.REGION, actual: 'us-east-2' }
+        when { equals expected: "$REGION", actual: 'us-east-2' }
 
         // when {
         //         beforeAgent true
@@ -99,12 +99,12 @@ pipeline {
 
         steps {
             sh 'echo "Pushing Prod image."'
-            // sh "\$(aws ecr get-login --no-include-email --region us-east-1)"
-            // sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
-            // sh "docker push 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
-            // environment {
-            //     msg = "Push to ECR in Prod Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-            // }
+            sh "\$(aws ecr get-login --no-include-email --region us-east-1)"
+            sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
+            sh "docker push 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
+            environment {
+                msg = "Push to ECR in Prod Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+            }
             //slackSend(color: colorCode, message: msg)       
         }
     }

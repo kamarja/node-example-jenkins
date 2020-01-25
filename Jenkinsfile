@@ -64,7 +64,7 @@ pipeline {
             REGION = sh (returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
         }
 
-        when { equals expected: 'develop', actual: 'develop' }
+        when { equals expected: REGION, actual: 'us-east-2' }
 
         // when {
         //         beforeAgent true
@@ -75,6 +75,7 @@ pipeline {
         steps {
             sh 'echo "Pushing QA image."'
             sh 'echo $REGION'
+            sh 'echo $server_name'
             sh "\$(aws ecr get-login --no-include-email --region us-east-2)"
             sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
             sh "docker push 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
@@ -83,14 +84,21 @@ pipeline {
     }
 
     stage('Push Prod image') {
-        when {
-                beforeAgent true
-                //env.HUDSON_URL 'http://jenkins.adventr.me:8080/'
-                branch 'master'
+        environment {
+            server_name = "${env.HUDSON_URL}"
+            REGION = sh (returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
         }
 
+        when { equals expected: REGION, actual: 'us-east-1' }
+
+        // when {
+        //         beforeAgent true
+        //         //env.HUDSON_URL 'http://jenkins.adventr.me:8080/'
+        //         branch 'master'
+        // }
+
         steps {
-            sh 'echo "Pushing QA image."'
+            sh 'echo "Pushing Prod image."'
             // sh "\$(aws ecr get-login --no-include-email --region us-east-1)"
             // sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
             // sh "docker push 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"

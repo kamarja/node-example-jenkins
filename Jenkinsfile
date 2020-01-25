@@ -16,6 +16,12 @@ pipeline {
             server_name = "${env.HUDSON_URL}"
             REGION = sh(script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region', , returnStdout: true).trim()
         }
+        
+        steps {
+            sh 'echo "Prepared variables."'
+            //sh "git rev-parse --short HEAD > .git/commit-id" 
+            //slackSend(color: colorCode, message: msg)
+        }
     }
 
     stage('Clone repository') {
@@ -30,6 +36,7 @@ pipeline {
         environment {
             msg = "Build Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
         }  
+
         steps {
             /* This builds the actual image - like docker build*/
             sh "echo build-stage"

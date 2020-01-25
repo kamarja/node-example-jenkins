@@ -23,6 +23,9 @@ pipeline {
     }
 
     stage('Build image') {
+        environment {
+            msg = "Build Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+        }  
         steps {
             /* This builds the actual image - like docker build*/
             sh "echo build-stage"
@@ -35,9 +38,6 @@ pipeline {
                 }
             }
             sh "docker build -t node-example-jenkins docker/."
-            // environment {
-            //     msg = "Build Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-            // }  
             //slackSend(color: colorCode, message: msg)       
         }
 

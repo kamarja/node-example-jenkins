@@ -74,6 +74,7 @@ pipeline {
 
         steps {
             sh 'echo "Pushing QA image."'
+            sh 'echo $REGION'
             sh "\$(aws ecr get-login --no-include-email --region us-east-2)"
             sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
             sh "docker push 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"

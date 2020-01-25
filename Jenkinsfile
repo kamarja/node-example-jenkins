@@ -15,7 +15,7 @@ pipeline {
             repo = "${env.GIT_URL}"
             server_name = "${env.HUDSON_URL}"
             branch = 'develop'
-            REGION = sh(returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
+            //REGION = sh(returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
         }
 
         steps {

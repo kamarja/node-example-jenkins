@@ -3,21 +3,25 @@
 
 pipeline {
   agent any
-//   environment {
-//     //commit_id = readFile('.git/commit-id').trim()
-//     msg = "Build Started - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-//     qa_ecr_msg = "Push to ECR in QA Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-//     prod_ecr_msg = "Push to ECR in Prod Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-//     repo = "${env.GIT_URL}"
-//     server_name = "${env.HUDSON_URL}"
 
-//   }
   stages {
+
+    // stage('Preparing') {
+    //     environment {
+    //         //commit_id = readFile('.git/commit-id').trim()
+    //         msg = "Build Started - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+    //         qa_ecr_msg = "Push to ECR in QA Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+    //         prod_ecr_msg = "Push to ECR in Prod Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+    //         repo = "${env.GIT_URL}"
+    //         server_name = "${env.HUDSON_URL}"
+
+    //     }
+    // }
+
     stage('Clone repository') {
         steps {
             checkout scm
             //sh "git rev-parse --short HEAD > .git/commit-id" 
-            
             //slackSend(color: colorCode, message: msg)
         }
     }
@@ -31,12 +35,6 @@ pipeline {
             sh "echo build-stage"
             sh 'echo "Printing environment variables."'
             sh "printenv"
-            sh 'echo "Printing Jenkins Internal Variables"'
-            script {
-                fields.each {
-                    key, value -> println("${key} = ${value}");
-                }
-            }
             sh "docker build -t node-example-jenkins docker/."
             //slackSend(color: colorCode, message: msg)       
         }
@@ -56,7 +54,7 @@ pipeline {
             sh "docker push 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
             //slackSend(color: colorCode, message: msg)
                 
-            }
+        }
     }
 
     stage('Push Prod image') {
@@ -67,9 +65,9 @@ pipeline {
             }
 
             sh 'echo "Pushing QA image."'
-            sh "\$(aws ecr get-login --no-include-email --region us-east-1)"
-            sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
-            sh "docker push 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
+            // sh "\$(aws ecr get-login --no-include-email --region us-east-1)"
+            // sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
+            // sh "docker push 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
             // environment {
             //     msg = "Push to ECR in Prod Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
             // }

@@ -2,7 +2,7 @@
 @Library('jenkins-shared-library')_
 
 pipeline {
-  agent none
+  agent any
 //   environment {
 //     //commit_id = readFile('.git/commit-id').trim()
 //     msg = "Build Started - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"

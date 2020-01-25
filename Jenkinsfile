@@ -51,7 +51,8 @@ pipeline {
     stage('Push QA image') {
         when {
                 beforeAgent true
-                env.HUDSON_URL 'http://jenkins.theadventr.com:8080/'
+                //env.HUDSON_URL 'http://jenkins.theadventr.com:8080/'
+                branch 'develop'
         }
 
         steps {
@@ -66,7 +67,8 @@ pipeline {
     stage('Push Prod image') {
         when {
                 beforeAgent true
-                env.HUDSON_URL 'http://jenkins.adventr.me:8080/'
+                //env.HUDSON_URL 'http://jenkins.adventr.me:8080/'
+                branch 'master'
         }
 
         steps {

@@ -16,7 +16,7 @@ pipeline {
             server_name = "${env.HUDSON_URL}"
             REGION = sh(script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region', , returnStdout: true).trim()
         }
-        
+
         steps {
             sh 'echo "Prepared variables."'
             //sh "git rev-parse --short HEAD > .git/commit-id" 
@@ -51,7 +51,7 @@ pipeline {
     stage('Push QA image') {
         when {
                 beforeAgent true
-                environment name: 'HUDSON_URL', value: 'http://jenkins.theadventr.com:8080/'
+                env.HUDSON_URL 'http://jenkins.theadventr.com:8080/'
         }
 
         steps {
@@ -66,7 +66,7 @@ pipeline {
     stage('Push Prod image') {
         when {
                 beforeAgent true
-                environment name: 'HUDSON_URL', value: 'http://jenkins.adventr.me:8080/'
+                env.HUDSON_URL 'http://jenkins.adventr.me:8080/'
         }
 
         steps {

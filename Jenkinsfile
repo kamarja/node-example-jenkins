@@ -9,9 +9,6 @@ pipeline {
     stage('Preparing') {
         environment {
             //commit_id = readFile('.git/commit-id').trim()
-            msg = "Build Started - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-            qa_ecr_msg = "Push to ECR in QA Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-            prod_ecr_msg = "Push to ECR in Prod Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
             repo = "${env.GIT_URL}"
             server_name = "${env.HUDSON_URL}"
             REGION = sh(returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
@@ -21,8 +18,6 @@ pipeline {
         steps {
             sh 'echo "Prepared variables."'
             initialize()
-            //sh "git rev-parse --short HEAD > .git/commit-id" 
-            //slackSend(color: colorCode, message: msg)
         }
     }
 
@@ -36,6 +31,7 @@ pipeline {
 
     stage('Build image') {
         environment {
+            colorCode = '#00FF00'
             msg = "Build Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
             server_name = "${env.HUDSON_URL}"
             REGION = sh(returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
@@ -56,9 +52,11 @@ pipeline {
 
     stage('Push QA image') {
         environment {
+            colorCode = '#00FF00'
             server_name = "${env.HUDSON_URL}"
             REGION = sh(returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
             branch = getContext(REGION)
+            msg = "Push to ECR in QA Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
         }
 
         when {
@@ -77,9 +75,11 @@ pipeline {
 
     stage('Push Prod image') {
         environment {
+            colorCode = '#00FF00'
             server_name = "${env.HUDSON_URL}"
             REGION = sh(returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
             branch = getContext(REGION)
+            msg = "Push to ECR in Prod Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
         }
 
         when {
@@ -98,6 +98,8 @@ pipeline {
 
     stage('Deploy QA') {
         environment {
+            colorCode = '#00FF00'
+            msg = "Successfully Deployed to QA - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
             server_name = "${env.HUDSON_URL}"
             REGION = sh(returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
             branch = getContext(REGION)
@@ -109,8 +111,7 @@ pipeline {
         }
 
         steps {
-            sh 'echo "Demploying QA image."'
-            // msg = "Successfully Deployed to QA - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+            sh 'echo "Deploying QA image."'
             // sh "sudo /var/lib/jenkins/adventrv2-adventr-k8s/scripts/qa_deploy_script.sh node-example-jenkins"
             //slackSend(color: colorCode, message: msg)      
         }
@@ -119,6 +120,7 @@ pipeline {
     stage('Deploy Prod') {
         environment {
             server_name = "${env.HUDSON_URL}"
+            msg = "Successfully Deployed to Prod - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
             REGION = sh(returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
             branch = getContext(REGION)
         }
@@ -160,7 +162,7 @@ def initialize() {
     echo "This is the region: ${AWS_REGION}"
     getContext("${AWS_REGION}")
     //Enable the function below for debbugging.
-    showEnvironmentVariables()
+    //showEnvironmentVariables()
 }
 
 

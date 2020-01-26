@@ -9,6 +9,7 @@ pipeline {
     stage('Preparing') {
         environment {
             //commit_id = readFile('.git/commit-id').trim()
+            //sh "git rev-parse --short HEAD > .git/commit-id"
             repo = "${env.GIT_URL}"
             server_name = "${env.HUDSON_URL}"
             REGION = sh(returnStdout: true, script: 'curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region').trim()
@@ -24,8 +25,6 @@ pipeline {
     stage('Clone repository') {
         steps {
             checkout scm
-            //sh "git rev-parse --short HEAD > .git/commit-id" 
-            //slackSend(color: colorCode, message: msg)
         }
     }
 
@@ -41,11 +40,10 @@ pipeline {
         steps {
             /* This builds the actual image - like docker build*/
             sh "echo build-stage"
-            sh 'echo "Printing environment variables."'
             sh 'echo $REGION'
             sh 'echo $server_name'
             sh "docker build -t node-example-jenkins docker/."
-            //slackSend(color: colorCode, message: msg)       
+            slackSend(color: colorCode, message: msg)       
         }
 
     }
@@ -69,7 +67,7 @@ pipeline {
             sh "\$(aws ecr get-login --no-include-email --region us-east-2)"
             sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
             sh "docker push 545314842485.dkr.ecr.us-east-2.amazonaws.com/node-example-jenkins:latest"
-            //slackSend(color: colorCode, message: msg)     
+            slackSend(color: colorCode, message: msg)     
         }
     }
 
@@ -92,7 +90,7 @@ pipeline {
             sh "\$(aws ecr get-login --no-include-email --region us-east-1)"
             sh "docker tag node-example-jenkins:latest 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
             sh "docker push 545314842485.dkr.ecr.us-east-1.amazonaws.com/node-example-jenkins:latest"
-            //slackSend(color: colorCode, message: msg)       
+            slackSend(color: colorCode, message: msg)       
         }
     }
 
@@ -112,8 +110,8 @@ pipeline {
 
         steps {
             sh 'echo "Deploying QA image."'
-            // sh "sudo /var/lib/jenkins/adventrv2-adventr-k8s/scripts/qa_deploy_script.sh node-example-jenkins"
-            //slackSend(color: colorCode, message: msg)      
+            sh "sudo /var/lib/jenkins/adventrv2-adventr-k8s/scripts/qa_deploy_script.sh node-example-jenkins"
+            slackSend(color: colorCode, message: msg)      
         }
     }
 
@@ -132,9 +130,8 @@ pipeline {
 
         steps {
             sh 'echo "Demploying Prod image."'
-            // msg = "Successfully Deployed to Prod - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-            // sh "sudo /var/lib/jenkins/adventrv2-adventr-k8s/scripts/qa_deploy_script.sh node-example-jenkins"
-            //slackSend(color: colorCode, message: msg)      
+            sh "sudo /var/lib/jenkins/adventrv2-adventr-k8s/scripts/qa_deploy_script.sh node-example-jenkins"
+            slackSend(color: colorCode, message: msg)      
         }
     }
   }

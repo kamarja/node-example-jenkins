@@ -61,7 +61,10 @@ pipeline {
             branch = getContext(REGION)
         }
 
-        when { equals expected: env.HUDSON_URL, actual: 'http://jenkins-qa.theadventr.com:8080/' }
+        when {
+            beforeInput true
+            equals expected: env.HUDSON_URL, actual: 'http://jenkins-qa.theadventr.com:8080/' 
+        }
 
         steps {
             sh 'echo "Pushing QA image."'
@@ -79,7 +82,10 @@ pipeline {
             branch = getContext(REGION)
         }
 
-        when { equals expected: env.HUDSON_URL, actual: 'http://jenkins.adventr.me:8080/' }
+        when {
+            beforeInput true 
+            equals expected: env.HUDSON_URL, actual: 'http://jenkins.adventr.me:8080/' 
+        }
 
         steps {
             sh 'echo "Pushing Prod image."'
@@ -97,7 +103,10 @@ pipeline {
             branch = getContext(REGION)
         }
 
-        when { equals expected: env.HUDSON_URL, actual: 'http://jenkins-qa.theadventr.com:8080/' }
+        when {
+            beforeInput true
+            equals expected: env.HUDSON_URL, actual: 'http://jenkins-qa.theadventr.com:8080/' 
+        }
 
         steps {
             sh 'echo "Demploying QA image."'
@@ -114,7 +123,10 @@ pipeline {
             branch = getContext(REGION)
         }
 
-        when { equals expected: env.HUDSON_URL, actual: 'http://jenkins.adventr.me:8080/' }
+        when {
+            beforeInput true
+            equals expected: env.HUDSON_URL, actual: 'http://jenkins.adventr.me:8080/' 
+        }
 
         steps {
             sh 'echo "Demploying Prod image."'

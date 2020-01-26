@@ -147,6 +147,7 @@ def initialize() {
     AWS_REGION = readFile 'region.txt'
     echo "This is the region: ${AWS_REGION}"
     getContext("${AWS_REGION}")
+    //Enable the function below for debbugging.
     showEnvironmentVariables()
 }
 
